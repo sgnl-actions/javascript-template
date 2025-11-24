@@ -6,7 +6,7 @@ describe('Job Template Script', () => {
       ENVIRONMENT: 'test'
     },
     secrets: {
-      API_KEY: 'test-api-key-123456'
+      BEARER_AUTH_TOKEN: 'test-api-key-123456'
     },
     outputs: {},
     partial_results: {},

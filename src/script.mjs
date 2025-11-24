@@ -29,8 +29,8 @@ export default {
     console.log(`Running in ${environment} environment`);
 
     // Access secrets securely (example)
-    if (context.secrets.API_KEY) {
-      console.log(`Using API key ending in ...${context.secrets.API_KEY.slice(-4)}`);
+    if (context.secrets.BEARER_AUTH_TOKEN) {
+      console.log(`Using API key ending in ...${context.secrets.BEARER_AUTH_TOKEN.slice(-4)}`);
     }
 
     // Use outputs from previous jobs in workflow

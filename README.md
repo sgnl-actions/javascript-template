@@ -119,7 +119,7 @@ The `context` parameter provides access to:
     // ... other environment variables
   },
   secrets: {
-    API_KEY: "secret-key",
+    BEARER_AUTH_TOKEN: "secret-key",
     // ... other secrets
   },
   outputs: {
