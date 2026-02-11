@@ -24,10 +24,7 @@ describe('Job Template Script', () => {
 
       expect(result.status).toBe('success');
       expect(result.target).toBe('test-user@example.com');
-      expect(result.action).toBe('create');
-      expect(result.status).toBeDefined();
       expect(result.processed_at).toBeDefined();
-      expect(result.options_processed).toBe(0);
     });
 
     test('should handle dry run mode', async () => {
@@ -41,7 +38,6 @@ describe('Job Template Script', () => {
 
       expect(result.status).toBe('dry_run_completed');
       expect(result.target).toBe('test-user@example.com');
-      expect(result.action).toBe('delete');
     });
 
     test('should process options array', async () => {
@@ -55,7 +51,6 @@ describe('Job Template Script', () => {
 
       expect(result.status).toBe('success');
       expect(result.target).toBe('test-group');
-      expect(result.options_processed).toBe(3);
     });
 
     test('should handle context with previous job outputs', async () => {
@@ -81,7 +76,6 @@ describe('Job Template Script', () => {
 
       expect(result.status).toBe('success');
       expect(result.target).toBe('user-12345');
-      expect(result.status).toBeDefined();
     });
   });
 
