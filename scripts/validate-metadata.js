@@ -123,10 +123,12 @@ function extractInputs(invokeFn) {
 function extractOutputs(invokeFn) {
   const outputs = new Set();
   const errors = [];
+  let hasDynamicReturn = false;
 
   walk.simple(invokeFn.body, {
     ReturnStatement(node) {
-      if (node.argument?.type === 'ObjectExpression') {
+      if (!node.argument) return;
+      if (node.argument.type === 'ObjectExpression') {
         for (const prop of node.argument.properties) {
           if (prop.type === 'SpreadElement') {
             errors.push('Return statements in invoke must use explicit keys, not spread');
@@ -134,11 +136,14 @@ function extractOutputs(invokeFn) {
             outputs.add(prop.key.name || prop.key.value);
           }
         }
+      } else {
+        // Return is a function call, variable, or await expression — can't statically resolve
+        hasDynamicReturn = true;
       }
     }
   });
 
-  return { outputs, errors };
+  return { outputs, errors, hasDynamicReturn };
 }
 
 function validateConformance(metadata) {
@@ -159,7 +164,7 @@ function validateConformance(metadata) {
   const metadataInputs = new Set(Object.keys(metadata.inputs));
   const metadataOutputs = new Set(Object.keys(metadata.outputs));
   const codeInputs = extractInputs(invokeFn);
-  const { outputs: codeOutputs, errors: outputErrors } = extractOutputs(invokeFn);
+  const { outputs: codeOutputs, errors: outputErrors, hasDynamicReturn } = extractOutputs(invokeFn);
 
   const errors = [...outputErrors];
   const warnings = [];
@@ -178,17 +183,23 @@ function validateConformance(metadata) {
     }
   }
 
-  // Outputs: metadata declares an output the code never returns
-  for (const output of metadataOutputs) {
-    if (!codeOutputs.has(output)) {
-      errors.push(`Output "${output}" is declared in metadata but not returned by invoke handler`);
+  // Output checks — skip if invoke returns a function call (can't statically resolve)
+  if (hasDynamicReturn && codeOutputs.size === 0) {
+    warnings.push('Invoke handler returns a function call instead of an explicit object literal. ' +
+      'Output conformance check skipped. Best practice: return an explicit object with named keys.');
+  } else {
+    // Outputs: metadata declares an output the code never returns
+    for (const output of metadataOutputs) {
+      if (!codeOutputs.has(output)) {
+        errors.push(`Output "${output}" is declared in metadata but not returned by invoke handler`);
+      }
     }
-  }
 
-  // Outputs: code returns a key not declared in metadata
-  for (const output of codeOutputs) {
-    if (!metadataOutputs.has(output)) {
-      errors.push(`Output "${output}" is returned by invoke handler but not declared in metadata`);
+    // Outputs: code returns a key not declared in metadata
+    for (const output of codeOutputs) {
+      if (!metadataOutputs.has(output)) {
+        errors.push(`Output "${output}" is returned by invoke handler but not declared in metadata`);
+      }
     }
   }
 
