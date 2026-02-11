@@ -48,15 +48,11 @@ export default {
 
     console.log(`Successfully completed ${action} on ${target}`);
 
-    // Return structured results
+    // Return structured results matching metadata.yaml outputs
     return {
       status: dry_run ? 'dry_run_completed' : 'success',
-      target: target,
-      action: action,
-      options_processed: options.length,
-      environment: environment,
+      target,
       processed_at: new Date().toISOString()
-      // Job completed successfully
     };
   },
 
