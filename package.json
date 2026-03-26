@@ -30,6 +30,6 @@
     "@sgnl-actions/validate": "github:sgnl-actions/validate#1392b07e0c1563e729d68d2eec328ee8e03e0783",
     "eslint": "^10.0.0",
     "jest": "^30.0.5",
-    "rollup": "^4.28.1"
+    "rollup": "^4.60.0"
   }
 }
