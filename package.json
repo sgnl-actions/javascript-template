@@ -31,5 +31,8 @@
     "eslint": "^10.0.1",
     "jest": "^30.4.2",
     "rollup": "^4.59.0"
+  },
+  "overrides": {
+    "serialize-javascript": ">=7.0.5"
   }
 }
